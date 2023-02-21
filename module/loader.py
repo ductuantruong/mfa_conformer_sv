@@ -6,9 +6,6 @@ import torch
 from pytorch_lightning import LightningDataModule
 from torch.utils.data import DataLoader
 
-from pl_bolts.datasets import UnlabeledImagenet
-from pl_bolts.utils.warnings import warn_missing_pkg
-
 from .dataset import Evaluation_Dataset, Train_Dataset, Semi_Dataset
 
 

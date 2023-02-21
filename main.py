@@ -237,8 +237,8 @@ def cli_main():
     trainer = Trainer(
             max_epochs=args.max_epochs,
             plugins=DDPPlugin(find_unused_parameters=False),
-            gpus=AVAIL_GPUS,
-            num_sanity_val_steps=-1,
+            gpus=-1,
+            num_sanity_val_steps=0,
             sync_batchnorm=True,
             callbacks=[checkpoint_callback, lr_monitor],
             default_root_dir=args.save_dir,
