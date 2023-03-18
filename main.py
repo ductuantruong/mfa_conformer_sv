@@ -19,6 +19,7 @@ from module.feature import Mel_Spectrogram
 from module.loader import SPK_datamodule
 import score as score
 from loss import softmax, amsoftmax
+from module.conformer_cat import conformer_cat
 
 class Task(LightningModule):
     def __init__(
@@ -28,7 +29,9 @@ class Task(LightningModule):
         batch_size: int = 32,
         num_workers: int = 10,
         max_epochs: int = 1000,
+        num_classes: int = 7205,
         trial_path: str = "data/vox1_test.txt",
+        loss_name: str = 'amsoftmax',
         **kwargs
     ):
         super().__init__()
@@ -36,53 +39,15 @@ class Task(LightningModule):
         self.trials = np.loadtxt(self.hparams.trial_path, str)
         self.mel_trans = Mel_Spectrogram()
 
-        from module.resnet import resnet34, resnet18, resnet34_large
-        from module.ecapa_tdnn import ecapa_tdnn, ecapa_tdnn_large
-        from module.transformer_cat import transformer_cat
-        from module.conformer import conformer
-        from module.conformer_cat import conformer_cat
-        from module.conformer_weight import conformer_weight
-
-        if self.hparams.encoder_name == "resnet18":
-            self.encoder = resnet18(embedding_dim=self.hparams.embedding_dim)
-
-        elif self.hparams.encoder_name == "resnet34":
-            self.encoder = resnet34_large(embedding_dim=self.hparams.embedding_dim)
-
-        elif self.hparams.encoder_name == "ecapa_tdnn":
-            self.encoder = ecapa_tdnn(embedding_dim=self.hparams.embedding_dim)
-
-        elif self.hparams.encoder_name == "ecapa_tdnn_large":
-            self.encoder = ecapa_tdnn_large(embedding_dim=self.hparams.embedding_dim)
-
-        elif self.hparams.encoder_name == "conformer":
-            print("num_blocks is {}".format(self.hparams.num_blocks))
-            self.encoder = conformer(embedding_dim=self.hparams.embedding_dim, 
-                    num_blocks=self.hparams.num_blocks, input_layer=self.hparams.input_layer)
-
-        elif self.hparams.encoder_name == "transformer_cat":
-            print("num_blocks is {}".format(self.hparams.num_blocks))
-            self.encoder = transformer_cat(embedding_dim=self.hparams.embedding_dim, 
-                    num_blocks=self.hparams.num_blocks, input_layer=self.hparams.input_layer)
-
-        elif self.hparams.encoder_name == "conformer_cat":
-            print("num_blocks is {}".format(self.hparams.num_blocks))
-            self.encoder = conformer_cat(embedding_dim=self.hparams.embedding_dim, 
-                    num_blocks=self.hparams.num_blocks, input_layer=self.hparams.input_layer,
-                    pos_enc_layer_type=self.hparams.pos_enc_layer_type)
-
-        elif self.hparams.encoder_name == "conformer_weight":
-            print("num_blocks is {}".format(self.hparams.num_blocks))
-            self.encoder = conformer_weight(embedding_dim=self.hparams.embedding_dim, 
-                    num_blocks=self.hparams.num_blocks, input_layer=self.hparams.input_layer)
-
-        else:
-            raise ValueError("encoder name error")
+        print("num_blocks is {}".format(self.hparams.num_blocks))
+        self.encoder = conformer_cat(embedding_dim=self.hparams.embedding_dim, 
+                num_blocks=self.hparams.num_blocks, input_layer=self.hparams.input_layer,
+                pos_enc_layer_type=self.hparams.pos_enc_layer_type)
 
         if self.hparams.loss_name == "amsoftmax":
-            self.loss_fun = amsoftmax(embedding_dim=self.hparams.embedding_dim, num_classes=self.hparams.num_classes)
+            self.loss_fun = amsoftmax(embedding_dim=self.hparams.embedding_dim, num_classes=num_classes)
         else:
-            self.loss_fun = softmax(embedding_dim=self.hparams.embedding_dim, num_classes=self.hparams.num_classes)
+            self.loss_fun = softmax(embedding_dim=self.hparams.embedding_dim, num_classes=num_classes)
 
     def forward(self, x):
         feature = self.mel_trans(x)
