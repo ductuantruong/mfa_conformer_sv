@@ -67,6 +67,8 @@ To run inference with the pretrained model, run:
 ```bash
 python3 inference.py --audio_path_1=path_to_audio_1 --audio_path_2=path_to_audio_2
 ```
+You can download pretrained model from [OneDrive](https://entuedu-my.sharepoint.com/:u:/g/personal/truongdu001_e_ntu_edu_sg/EcJyOcfrieFFmeS3k4pVvyABlEIYFKW9sAB24uFt6abfeA?e=TdtCik).
+
 ## Others
 
 What's more, here are some tips might be useful:
