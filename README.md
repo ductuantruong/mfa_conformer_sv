@@ -6,6 +6,11 @@ This repository contains the training code accompanying the paper "MFA-Conformer
 
 The architecture of the MFA-Conformer is inspired by recent state-of-the-art models in speech recognition and speaker verification. Firstly, we introduce a convolution subsampling layer to decrease the computational cost of the model. Secondly, we adopt Conformer blocks which combine Transformers and convolution neural networks (CNNs) to capture global and local features effectively. Finally, the output feature maps from all Conformer blocks are concatenated to aggregate multi-scale representations before final pooling. The best system obtains 0.64%, 1.29% and 1.63% EER on VoxCeleb1-O, SITW.Dev, and SITW.Eval set, respectively. 
 
+## Setting up python environment
+```bash
+pip install -r requirements.txt
+```
+
 ## Data Preparation
 
 * [VoxCeleb 1&2](https://www.robots.ox.ac.uk/~vgg/data/voxceleb/)
@@ -57,6 +62,11 @@ The training results of default configuration is prestented below (Voxceleb1-tes
 
 <p align="center"><img width="100%" src="docs/results.png" /></p>
 
+## Results
+To run inference with the pretrained model, run:
+```bash
+python3 inference.py --audio_path_1=path_to_audio_1 --audio_path_2=path_to_audio_2
+```
 ## Others
 
 What's more, here are some tips might be useful:
