@@ -50,8 +50,8 @@ class Task(LightningModule):
             self.loss_fun = softmax(embedding_dim=self.hparams.embedding_dim, num_classes=num_classes)
 
     def forward(self, x):
-        feature = self.mel_trans(x)
-        embedding = self.encoder(feature)
+        feature = self.mel_trans(x) # to compute fbank feature
+        embedding = self.encoder(feature) # feature extractor to extract speaker embedding
         return embedding
 
     def training_step(self, batch, batch_idx):
@@ -162,14 +162,12 @@ class Task(LightningModule):
         parser.add_argument("--save_dir", type=str, default=None)
         parser.add_argument("--checkpoint_path", type=str, default=None)
         parser.add_argument("--loss_name", type=str, default="amsoftmax")
-        parser.add_argument("--encoder_name", type=str, default="resnet34")
 
         parser.add_argument("--train_csv_path", type=str, default="data/train.csv")
         parser.add_argument("--trial_path", type=str, default="data/vox1_test.txt")
         parser.add_argument("--score_save_path", type=str, default=None)
 
         parser.add_argument('--eval', action='store_true')
-        parser.add_argument('--aug', action='store_true')
         return parser
 
 
@@ -195,9 +193,8 @@ def cli_main():
     lr_monitor = LearningRateMonitor(logging_interval='step')
 
     # init default datamodule
-    print("data augmentation {}".format(args.aug))
     dm = SPK_datamodule(train_csv_path=args.train_csv_path, trial_path=args.trial_path, second=args.second,
-            aug=args.aug, batch_size=args.batch_size, num_workers=args.num_workers, pairs=False)
+            batch_size=args.batch_size, num_workers=args.num_workers, pairs=False)
     AVAIL_GPUS = torch.cuda.device_count()
     trainer = Trainer(
             max_epochs=args.max_epochs,

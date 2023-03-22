@@ -22,7 +22,6 @@ class SPK_datamodule(LightningDataModule):
         pin_memory: bool = True,
         drop_last: bool = True,
         pairs: bool = True,
-        aug: bool = False,
         semi: bool = False,
         *args: Any,
         **kwargs: Any,
@@ -36,14 +35,13 @@ class SPK_datamodule(LightningDataModule):
         self.batch_size = batch_size
         self.trial_path = trial_path
         self.pairs = pairs
-        self.aug = aug
         print("second is {:.2f}".format(second))
 
     def train_dataloader(self) -> DataLoader:
         if self.unlabel_csv_path is None:
-            train_dataset = Train_Dataset(self.train_csv_path, self.second, self.pairs, self.aug)
+            train_dataset = Train_Dataset(self.train_csv_path, self.second, self.pairs)
         else:
-            train_dataset = Semi_Dataset(self.train_csv_path, self.unlabel_csv_path, self.second, self.pairs, self.aug)
+            train_dataset = Semi_Dataset(self.train_csv_path, self.unlabel_csv_path, self.second, self.pairs)
         loader = torch.utils.data.DataLoader(
                 train_dataset,
                 shuffle=True,

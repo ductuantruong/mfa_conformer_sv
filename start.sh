@@ -1,4 +1,4 @@
-encoder_name="conformer_cat" # conformer_cat | ecapa_tdnn_large | resnet34
+encoder_name="conformer_cat"
 embedding_dim=192
 loss_name="amsoftmax"
 

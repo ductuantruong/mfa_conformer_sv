@@ -9,7 +9,6 @@ from scipy import signal
 from scipy.io import wavfile
 from sklearn.utils import shuffle
 from torch.utils.data import DataLoader, Dataset
-from .augment import WavAugment
 
 
 def load_audio(filename, second=2):
@@ -31,7 +30,7 @@ def load_audio(filename, second=2):
     return waveform.copy()
 
 class Train_Dataset(Dataset):
-    def __init__(self, train_csv_path, second=3, pairs=True, aug=False, **kwargs):
+    def __init__(self, train_csv_path, second=3, pairs=True, **kwargs):
         self.second = second
         self.pairs = pairs
 
@@ -39,24 +38,16 @@ class Train_Dataset(Dataset):
         self.labels = df["utt_spk_int_labels"].values
         self.paths = df["utt_paths"].values
         self.labels, self.paths = shuffle(self.labels, self.paths)
-        self.aug = aug
-        if aug:
-            self.wav_aug = WavAugment()
 
         print("Train Dataset load {} speakers".format(len(set(self.labels))))
         print("Train Dataset load {} utterance".format(len(self.labels)))
 
     def __getitem__(self, index):
         waveform_1 = load_audio(self.paths[index], self.second)
-        if self.aug == True:
-            waveform_1 = self.wav_aug(waveform_1)
         if self.pairs == False:
             return torch.FloatTensor(waveform_1), self.labels[index]
-
         else:
             waveform_2 = load_audio(self.paths[index], self.second)
-            if self.aug == True:
-                waveform_2 = self.wav_aug(waveform_2)
             return torch.FloatTensor(waveform_1), torch.FloatTensor(waveform_2), self.labels[index]
 
     def __len__(self):
@@ -64,17 +55,13 @@ class Train_Dataset(Dataset):
 
 
 class Semi_Dataset(Dataset):
-    def __init__(self, label_csv_path, unlabel_csv_path, second=2, pairs=True, aug=False, **kwargs):
+    def __init__(self, label_csv_path, unlabel_csv_path, second=2, pairs=True, **kwargs):
         self.second = second
         self.pairs = pairs
 
         df = pd.read_csv(label_csv_path)
         self.labels = df["utt_spk_int_labels"].values
         self.paths = df["utt_paths"].values
-
-        self.aug = aug
-        if aug:
-            self.wav_aug = WavAugment()
 
         df = pd.read_csv(unlabel_csv_path)
         self.u_paths = df["utt_paths"].values
@@ -94,16 +81,12 @@ class Semi_Dataset(Dataset):
 
         idx = np.random.randint(0, self.u_paths_length)
         waveform_u_1 = load_audio(self.u_paths[idx], self.second)
-        if self.aug == True:
-            waveform_u_1 = self.wav_aug(waveform_u_1)
 
         if self.pairs == False:
             return torch.FloatTensor(waveform_l), self.labels[index], torch.FloatTensor(waveform_u_1)
 
         else:
             waveform_u_2 = load_audio(self.u_paths[idx], self.second)
-            if self.aug == True:
-                waveform_u_2 = self.wav_aug(waveform_u_2)
             return torch.FloatTensor(waveform_l), self.labels[index], torch.FloatTensor(waveform_u_1), torch.FloatTensor(waveform_u_2)
 
     def __len__(self):
