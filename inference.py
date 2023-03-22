@@ -19,10 +19,10 @@ parser.add_argument('--second', type=int, default=3)
 parser.add_argument("--loss_name", type=str, default="amsoftmax")
 parser.add_argument("--input_layer", type=str, default="conv2d2")
 parser.add_argument("--pos_enc_layer_type", type=str, default="abs_pos")
-parser.add_argument("--checkpoint_path", type=str, default='checkpoints/epoch\=17_cosine_eer\=1.24.ckpt')
+parser.add_argument("--checkpoint_path", type=str, default='checkpoints/epoch=17_cosine_eer=1.24.ckpt')
 parser.add_argument("--threshold", type=int, default=0.22)
-parser.add_argument("--audio_path_1", type=str)
-parser.add_argument("--audio_path_2", type=str)
+parser.add_argument("--audio_path_1", type=str, default='audio_samples/spk1_utt1.wav')
+parser.add_argument("--audio_path_2", type=str, default='audio_samples/spk1_utt2.wav')
 
 hparams = parser.parse_args()
 
@@ -43,11 +43,11 @@ lightning_model.to(device)
 print("load weight from {}".format(hparams.checkpoint_path))
 
 # Running inference
-audio_path_1 = hparams['audio_path_1']
+audio_path_1 = hparams.audio_path_1
 wav_1 = load_audio(audio_path_1, hparams.second)
 emb_wav_1 = lightning_model(torch.FloatTensor(wav_1).unsqueeze(0).to(device))
 
-audio_path_2 = hparams['audio_path_2']
+audio_path_2 = hparams.audio_path_2
 wav_2 = load_audio(audio_path_2, hparams.second)
 emb_wav_2 = lightning_model(torch.FloatTensor(wav_2).unsqueeze(0).to(device))
 

@@ -62,26 +62,17 @@ The training results of default configuration is prestented below (Voxceleb1-tes
 
 <p align="center"><img width="100%" src="docs/results.png" /></p>
 
-## Results
+## Inference
 To run inference with the pretrained model, run:
 ```bash
-python3 inference.py --audio_path_1=path_to_audio_1 --audio_path_2=path_to_audio_2
+python3 inference.py --checkpoint_path=path_to/pretrained_model.ckpt --audio_path_1=path_to/audio_1.wav --audio_path_2=path_to/audio_2.wav 
 ```
 You can download pretrained model from [OneDrive](https://entuedu-my.sharepoint.com/:u:/g/personal/truongdu001_e_ntu_edu_sg/EcJyOcfrieFFmeS3k4pVvyABlEIYFKW9sAB24uFt6abfeA?e=TdtCik).
 
-## Others
-
-What's more, here are some tips might be useful:
-
-1. **The Conformer block**: We the borrow a lot of code from [WeNet](https://github.com/wenet-e2e/wenet) toolkit. 
-2. **Average the checkpoint weights**: When the model training is done, we average the parameters of the last 3~10 checkpoints to generate a new checkpoint. The new checkpoint always tends to achieve a better recognition performance.
-3. **Warmup**: We perform a linear warmup learning rate schedule at the first 2k training steps. And we find that this warmup procedure is very helpful for the model training.
-4. **AS-norm**: Adaptive score normalization (AS-norm) is common trick for speaker recognition. In our experiment, it will lead to 5%-10% relative improvement in EER metric.
-
 ## Citation
+Most of the code in this repo is from: https://github.com/zyzisyz/mfa_conformer
 
-If you find this code useful for your research, please cite our paper.
-
+The original paper:
 ```
 @article{zhang2022mfa,
   title={MFA-Conformer: Multi-scale Feature Aggregation Conformer for Automatic Speaker Verification},
