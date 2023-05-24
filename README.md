@@ -56,12 +56,6 @@ python3 main.py \
         --pos_enc_layer_type $pos_enc_layer_type 
 ```
 
-## Results
-
-The training results of default configuration is prestented below (Voxceleb1-test):
-
-<p align="center"><img width="100%" src="docs/results.png" /></p>
-
 ## Inference
 To run inference with the pretrained model, run:
 ```bash
