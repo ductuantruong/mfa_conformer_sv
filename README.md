@@ -43,7 +43,7 @@ To run inference with the pretrained model, run:
 ```bash
 python3 inference.py --checkpoint_path=path_to/pretrained_model.ckpt --audio_path_1=path_to/audio_1.wav --audio_path_2=path_to/audio_2.wav 
 ```
-You can download pretrained model from [OneDrive](https://entuedu-my.sharepoint.com/:u:/g/personal/truongdu001_e_ntu_edu_sg/EYAopq_u-1hLiiFA254Gg4IBidOuHMLLnVTAFP7p6RD0jQ?e=5gFFm1).
+You can download pretrained model from [OneDrive](https://entuedu-my.sharepoint.com/:u:/g/personal/truongdu001_e_ntu_edu_sg/EfeIgwS89qpGpp8oZFyDuHcBQh2w0NwH2cABV6uKvMwLdA?e=kNNe2E).
 
 ## Citation
 Most of the code in this repo is from: https://github.com/zyzisyz/mfa_conformer
