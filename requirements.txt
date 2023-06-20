@@ -8,8 +8,6 @@ async-timeout==4.0.2
 attrs==22.2.0
 audioread==3.0.0
 cachetools==5.3.0
-cauchy-mult==0.0.0
-certifi @ file:///croot/certifi_1671487769961/work/certifi
 cffi==1.15.1
 charset-normalizer==3.0.1
 contourpy==1.0.7
@@ -78,10 +76,7 @@ tensorboard-data-server==0.7.0
 tensorboard-plugin-wit==1.8.1
 threadpoolctl==3.1.0
 tokenizers==0.13.2
-torch==1.10.0+cu111
-torchaudio==0.10.0+cu111
 torchmetrics==0.6.0
-torchvision==0.11.0+cu111
 tqdm==4.64.1
 transformers==4.26.1
 typeguard==2.13.3
@@ -90,3 +85,4 @@ urllib3==1.26.14
 Werkzeug==2.2.3
 yarl==1.8.2
 zipp==3.13.0
+setuptools==59.5.0
