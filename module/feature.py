@@ -24,7 +24,7 @@ class PreEmphasis(torch.nn.Module):
 
 
 class Mel_Spectrogram(nn.Module):
-    def __init__(self, sample_rate=16000, n_fft=512, win_length=400, hop=160, n_mels=80, coef=0.97, requires_grad=False):
+    def __init__(self, sample_rate=8000, n_fft=512, win_length=200, hop=80, n_mels=80, coef=0.97, requires_grad=False):
         super(Mel_Spectrogram, self).__init__()
         self.n_fft = n_fft
         self.n_mels = n_mels

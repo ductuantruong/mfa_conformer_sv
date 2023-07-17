@@ -13,6 +13,7 @@ from torch.utils.data import DataLoader, Dataset
 
 def load_audio(filename, second=2):
     sample_rate, waveform = wavfile.read(filename)
+    assert sample_rate == 8000, 'Wrong number of samples'
     audio_length = waveform.shape[0]
 
     if second <= 0:
