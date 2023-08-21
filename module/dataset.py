@@ -9,16 +9,23 @@ from scipy import signal
 from scipy.io import wavfile
 from sklearn.utils import shuffle
 from torch.utils.data import DataLoader, Dataset
+import scipy.signal
 
 
-def load_audio(filename, second=2):
-    sample_rate, waveform = wavfile.read(filename)
+def load_audio(filename, second=2, sample_rate=16000):
+    sr, waveform = wavfile.read(filename)
     audio_length = waveform.shape[0]
+    assert sr == 16000 or sr == 8000, 'Wrong number of samples'
+    if sr != sample_rate:
+        if sample_rate == 8000:
+            waveform = scipy.signal.resample(waveform, len(waveform)//2).astype(np.int16)
+        elif sample_rate == 16000:
+            waveform = scipy.signal.resample(waveform, len(waveform)*2).astype(np.int16)
 
     if second <= 0:
         return waveform.astype(np.float64).copy()
 
-    length = np.int64(sample_rate * second)
+    length = np.int64(sr * second)
 
     if audio_length <= length:
         shortage = length - audio_length
@@ -55,9 +62,10 @@ class Train_Dataset(Dataset):
 
 
 class Semi_Dataset(Dataset):
-    def __init__(self, label_csv_path, unlabel_csv_path, second=2, pairs=True, **kwargs):
+    def __init__(self, label_csv_path, unlabel_csv_path, second=2, pairs=True, sample_rate=16000, **kwargs):
         self.second = second
         self.pairs = pairs
+        self.sample_rate = sample_rate
 
         df = pd.read_csv(label_csv_path)
         self.labels = df["utt_spk_int_labels"].values
@@ -94,13 +102,14 @@ class Semi_Dataset(Dataset):
 
 
 class Evaluation_Dataset(Dataset):
-    def __init__(self, paths, second=-1, **kwargs):
+    def __init__(self, paths, second=-1, sample_rate=16000, **kwargs):
         self.paths = paths
         self.second = second
+        self.sample_rate = sample_rate 
         print("load {} utterance".format(len(self.paths)))
 
     def __getitem__(self, index):
-        waveform = load_audio(self.paths[index], self.second)
+        waveform = load_audio(self.paths[index], self.second, self.sample_rate)
         return torch.FloatTensor(waveform), self.paths[index]
 
     def __len__(self):

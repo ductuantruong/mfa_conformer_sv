@@ -32,12 +32,21 @@ class Task(LightningModule):
         num_classes: int = 7205,
         trial_path: str = "data/vox1_test.txt",
         loss_name: str = 'amsoftmax',
+        sample_rate: int = 16000,
         **kwargs
     ):
         super().__init__()
         self.save_hyperparameters()
         self.trials = np.loadtxt(self.hparams.trial_path, str)
-        self.mel_trans = Mel_Spectrogram()
+        assert sample_rate == 16000 or sample_rate == 8000, 'Wrong number of samples'
+        if sample_rate == 16000:
+            win_length = 400
+            hop = 160 
+        elif sample_rate == 8000:
+            win_length = 200
+            hop = 80 
+
+        self.mel_trans = Mel_Spectrogram(win_length=win_length, hop=hop)
 
         print("num_blocks is {}".format(self.hparams.num_blocks))
         self.encoder = conformer_cat(embedding_dim=self.hparams.embedding_dim, 

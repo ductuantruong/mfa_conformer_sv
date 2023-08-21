@@ -27,8 +27,9 @@ parser.add_argument('--second', type=int, default=-1)
 parser.add_argument("--loss_name", type=str, default="amsoftmax")
 parser.add_argument("--input_layer", type=str, default="conv2d2")
 parser.add_argument("--pos_enc_layer_type", type=str, default="abs_pos")
-parser.add_argument("--checkpoint_path", type=str, default='checkpoints/epoch=17_cosine_eer=0.72.ckpt')
-parser.add_argument("--trial_path", type=str, default='data/vox1_test.txt')
+parser.add_argument("--trial_path", type=str, help='path to your trial file')
+parser.add_argument("--checkpoint_path", type=str, help='path to the pretrained model')
+parser.add_argument("--sample_rate", type=int, help='audio input frequency (8000 Hz or 16000 Hz)')
 
 hparams = parser.parse_args()
 
@@ -40,7 +41,9 @@ lightning_model = Task(
                     num_blocks=hparams.num_blocks,
                     loss_name=hparams.loss_name,
                     input_layer=hparams.input_layer,
-                    pos_enc_layer_type=hparams.pos_enc_layer_type
+                    pos_enc_layer_type=hparams.pos_enc_layer_type,
+                    trial_path=hparams.trial_path,
+                    sample_rate=hparams.sample_rate
                 )
 state_dict = torch.load(hparams.checkpoint_path, map_location=device)["state_dict"]
 lightning_model.load_state_dict(state_dict)
@@ -53,7 +56,7 @@ eval_path = np.unique(np.concatenate((trials.T[1], trials.T[2])))
 print("number of enroll: {}".format(len(set(trials.T[1]))))
 print("number of test: {}".format(len(set(trials.T[2]))))
 print("number of evaluation: {}".format(len(eval_path)))
-test_dataset = Evaluation_Dataset(eval_path, second=-1)
+test_dataset = Evaluation_Dataset(eval_path, second=-1, sample_rate=hparams.sample_rate)
 test_loader = torch.utils.data.DataLoader(test_dataset,
                                         num_workers=10,
                                         shuffle=False, 
@@ -98,11 +101,3 @@ EER, threshold = score.compute_eer(labels, scores)
 
 print("\ncosine EER: {:.2f}% with threshold {:.2f}".format(EER*100, threshold))
 print("cosine_eer", EER*100)
-
-minDCF, threshold = score.compute_minDCF(labels, scores, p_target=0.01)
-print("cosine minDCF(10-2): {:.2f} with threshold {:.2f}".format(minDCF, threshold))
-print("cosine_minDCF(10-2)", minDCF)
-
-minDCF, threshold = score.compute_minDCF(labels, scores, p_target=0.001)
-print("cosine minDCF(10-3): {:.2f} with threshold {:.2f}".format(minDCF, threshold))
-print("cosine_minDCF(10-3)", minDCF)
